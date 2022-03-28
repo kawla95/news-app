@@ -1,4 +1,3 @@
-const { response } = require("express");
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
@@ -40,7 +39,6 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/2")
       .expect(200)
       .then((response) => {
-        expect(response.body.article).toEqual(response.body.article);
         expect(response.body.article).toEqual({
           article_id: expect.any(Number),
           title: expect.any(String),
