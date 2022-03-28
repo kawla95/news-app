@@ -33,3 +33,21 @@ test("status: 404 - with an error message", () => {
       expect(body.msg).toBe("path not found");
     });
 });
+describe("/api/articles/:article_id", () => {
+  test("status: 200 & an article with the id coming from client", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.article).toEqual({
+          article_id: expect.any(Number),
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+        });
+      });
+  });
+});
