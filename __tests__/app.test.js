@@ -33,12 +33,13 @@ test("status: 404 - with an error message", () => {
       expect(body.msg).toBe("path not found");
     });
 });
-describe("/api/articles/:article_id", () => {
+describe("/api/articles/:article_id(comment count)", () => {
   test("status: 200 & an article with the id coming from client", () => {
     return request(app)
-      .get("/api/articles/1")
+      .get("/api/articles/3")
       .expect(200)
       .then((response) => {
+        console.log(response.body.article);
         expect(response.body.article).toEqual({
           article_id: expect.any(Number),
           title: expect.any(String),
@@ -46,6 +47,7 @@ describe("/api/articles/:article_id", () => {
           author: expect.any(String),
           body: expect.any(String),
           created_at: expect.any(String),
+          comment_count: expect.any(String),
           votes: expect.any(Number),
         });
       });
