@@ -10,6 +10,7 @@ const {
   getArticleById,
   getUsers,
   getCommentsByArticleId,
+  getArticles,
 } = require("./controllers/news");
 
 app.use(express.json());
@@ -21,6 +22,8 @@ app.get("/api/articles/:articleId", getArticleById);
 app.get("/api/users", getUsers);
 
 app.get("/api/articles/:articleId/comments", getCommentsByArticleId);
+
+app.get("/api/articles", getArticles);
 
 app.all("/*", handleIncorrectPath);
 
