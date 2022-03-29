@@ -70,3 +70,14 @@ describe("/api/users", () => {
       });
   });
 });
+describe("/api/articles/:article_id/comments", () => {
+  test("GET status 200 & comments of the article id requested by the client", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((res) => {
+        expect(res.body).toBeInstanceOf(Array);
+        expect(res.body).toHaveLength(11);
+      });
+  });
+});
