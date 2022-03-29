@@ -5,13 +5,15 @@ const {
   handleInternalServerError,
 } = require("./errorhandling");
 
-const { getTopics, getArticleById } = require("./controllers/news");
+const { getTopics, getArticleById, getUsers } = require("./controllers/news");
 
 app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:articleId", getArticleById);
+
+app.get("/api/users", getUsers);
 
 app.all("/*", handleIncorrectPath);
 

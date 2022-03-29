@@ -36,7 +36,7 @@ test("status: 404 - with an error message", () => {
 describe("/api/articles/:article_id", () => {
   test("status: 200 & an article with the id coming from client", () => {
     return request(app)
-      .get("/api/articles/2")
+      .get("/api/articles/1")
       .expect(200)
       .then((response) => {
         expect(response.body.article).toEqual({
@@ -47,6 +47,25 @@ describe("/api/articles/:article_id", () => {
           body: expect.any(String),
           created_at: expect.any(String),
           votes: expect.any(Number),
+        });
+      });
+  });
+});
+describe("/api/users", () => {
+  test("GET status 200 - responds with an array of users objects", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toHaveLength(4);
+        body.users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
+            })
+          );
         });
       });
   });
