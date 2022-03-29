@@ -8,8 +8,11 @@ exports.selectTopics = () => {
 exports.selectArticle = (articleId) => {
   return db
     .query(
-      `SELECT * FROM articles WHERE article_id = $1
-      ;`,
+      `SELECT articles.*, COUNT(comments.comment_id) AS comment_count 
+    FROM articles 
+    JOIN comments ON articles.article_id = comments.article_id
+    WHERE articles.article_id = $1 GROUP BY articles.article_id
+    ;`,
       [articleId]
     )
     .then((response) => {
