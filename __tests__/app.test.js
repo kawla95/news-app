@@ -1,3 +1,4 @@
+const { response } = require("express");
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
@@ -39,7 +40,6 @@ describe("/api/articles/:article_id(comment count)", () => {
       .get("/api/articles/3")
       .expect(200)
       .then((response) => {
-        console.log(response.body.article);
         expect(response.body.article).toEqual({
           article_id: expect.any(Number),
           title: expect.any(String),
@@ -80,6 +80,34 @@ describe("/api/articles/:article_id/comments", () => {
       .then((res) => {
         expect(res.body).toBeInstanceOf(Array);
         expect(res.body).toHaveLength(11);
+      });
+  });
+});
+describe("/api/articles", () => {
+  test("GET status 200 - responds with an array of articles objects", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then((response) => {
+        expect(response.body.articles).toBeInstanceOf(Array);
+        expect(response.body.articles).toHaveLength(5);
+        expect(response.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+        response.body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              title: expect.any(String),
+              topic: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(String),
+            })
+          );
+        });
       });
   });
 });
