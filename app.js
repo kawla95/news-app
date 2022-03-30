@@ -11,6 +11,7 @@ const {
   getUsers,
   getCommentsByArticleId,
   getArticles,
+  patchArticleById,
 } = require("./controllers/news");
 
 app.use(express.json());
@@ -24,6 +25,8 @@ app.get("/api/users", getUsers);
 app.get("/api/articles/:articleId/comments", getCommentsByArticleId);
 
 app.get("/api/articles", getArticles);
+
+app.patch("/api/articles/:articleId", patchArticleById);
 
 app.all("/*", handleIncorrectPath);
 

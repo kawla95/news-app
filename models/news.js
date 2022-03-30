@@ -42,3 +42,15 @@ exports.selectArticles = () => {
       return response.rows;
     });
 };
+
+exports.updateArticleById = (articleId, inc_votes) => {
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $1
+                  WHERE article_id = $2 RETURNING *;`,
+      [inc_votes, articleId]
+    )
+    .then((response) => {
+      return response.rows[0];
+    });
+};
