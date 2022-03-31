@@ -91,7 +91,7 @@ describe("/api/articles", () => {
         expect(response.body.articles).toBeInstanceOf(Array);
         expect(response.body.articles).toHaveLength(5);
         expect(response.body.articles).toBeSortedBy("created_at", {
-          descending: true,
+          ascending: true,
         });
         response.body.articles.forEach((article) => {
           expect(article).toEqual(
@@ -110,6 +110,7 @@ describe("/api/articles", () => {
       });
   });
 });
+
 describe("DELETE /api/comments/:comment_id", () => {
   test("return status: 204 and no content", () => {
     return request(app).delete("/api/comments/2").expect(204);
