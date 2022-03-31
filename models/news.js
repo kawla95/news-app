@@ -42,3 +42,12 @@ exports.selectArticles = () => {
       return response.rows;
     });
 };
+exports.removeComment = (commentId) => {
+  return db
+    .query(`DELETE from comments WHERE comment_id = $1 RETURNING *;`, [
+      commentId,
+    ])
+    .then((res) => {
+      return res.rows[0];
+    });
+};

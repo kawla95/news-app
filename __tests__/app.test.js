@@ -110,3 +110,8 @@ describe("/api/articles", () => {
       });
   });
 });
+describe("DELETE /api/comments/:comment_id", () => {
+  test("return status: 204 and no content", () => {
+    return request(app).delete("/api/comments/2").expect(204);
+  });
+});
