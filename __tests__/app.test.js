@@ -130,3 +130,23 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
+test("status: 404 - with an error message", () => {
+  return request(app)
+    .patch("/api/articles/4576734956")
+    .expect(500)
+    .then(({ body }) => {
+      expect(body.msg).toBe("Internal Server Error");
+    });
+});
+test("status: 400, returns an error", () => {
+  const patchVote = {
+    inc_votes: "",
+  };
+  return request(app)
+    .patch("/api/articles/567576")
+    .send(patchVote)
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("path not found");
+    });
+});
