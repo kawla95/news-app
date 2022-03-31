@@ -44,6 +44,9 @@ exports.selectArticles = () => {
 };
 
 exports.updateArticleById = (articleId, inc_votes) => {
+  if (inc_votes === "bad") {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
   return db
     .query(
       `UPDATE articles SET votes = votes + $1
@@ -51,6 +54,7 @@ exports.updateArticleById = (articleId, inc_votes) => {
       [inc_votes, articleId]
     )
     .then((response) => {
+      console.log(response.rows[0]);
       return response.rows[0];
     });
 };

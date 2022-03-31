@@ -3,6 +3,7 @@ const app = express();
 const {
   handleIncorrectPath,
   handleInternalServerError,
+  handleInvalidRequests,
 } = require("./errorhandling");
 
 const {
@@ -30,6 +31,6 @@ app.patch("/api/articles/:articleId", patchArticleById);
 
 app.all("/*", handleIncorrectPath);
 
-app.use(handleInternalServerError);
+app.use(handleInternalServerError, handleInvalidRequests);
 
 module.exports = app;

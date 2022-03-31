@@ -130,23 +130,22 @@ describe("/api/articles/:article_id", () => {
     });
   });
 });
-test("status: 404 - with an error message", () => {
-  return request(app)
-    .patch("/api/articles/4576734956")
-    .expect(500)
-    .then(({ body }) => {
-      expect(body.msg).toBe("Internal Server Error");
-    });
+test("status: 404 - with an error message", async () => {
+  const patchVote = {
+    inc_votes: 100,
+  };
+  const { body } = await request(app).patch("/").send(patchVote).expect(404);
+  expect(body.msg).toBe("path not found");
 });
 test("status: 400, returns an error", () => {
-  const patchVote = {
+  const patchVotes = {
     inc_votes: "",
   };
   return request(app)
-    .patch("/api/articles/567576")
-    .send(patchVote)
-    .expect(404)
-    .then(({ body }) => {
-      expect(body.msg).toBe("path not found");
+    .patch("/api/articles/1")
+    .send(patchVotes)
+    .expect(400)
+    .then((res) => {
+      expect(res.msg).toBe("Bad Request");
     });
 });
