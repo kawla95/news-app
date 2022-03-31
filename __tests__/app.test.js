@@ -131,21 +131,21 @@ describe("/api/articles/:article_id", () => {
   });
 });
 test("status: 404 - with an error message", async () => {
-  const patchVote = {
+  const patchVotes = {
     inc_votes: 100,
   };
-  const { body } = await request(app).patch("/").send(patchVote).expect(404);
+  const { body } = await request(app).patch("/").send(patchVotes).expect(404);
   expect(body.msg).toBe("path not found");
 });
 test("status: 400, returns an error", () => {
   const patchVotes = {
-    inc_votes: "",
+    inc_votes: "jguf",
   };
   return request(app)
     .patch("/api/articles/1")
     .send(patchVotes)
     .expect(400)
     .then((res) => {
-      expect(res.msg).toBe("Bad Request");
+      expect(res.body.msg).toBe("Bad request");
     });
 });

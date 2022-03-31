@@ -31,6 +31,13 @@ app.patch("/api/articles/:articleId", patchArticleById);
 
 app.all("/*", handleIncorrectPath);
 
-app.use(handleInternalServerError, handleInvalidRequests);
+app.use((err, req, res, next) => {
+  if (err.status) {
+    res.status(err.status).send({ msg: err.msg });
+  } else {
+    next(err);
+  }
+});
+app.use(handleInternalServerError);
 
 module.exports = app;
