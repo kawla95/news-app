@@ -4,7 +4,7 @@ const {
   selectUsers,
   selectCommentsByArticleId,
   selectArticles,
-  removeComment,
+  updateArticleById,
 } = require("../models/news");
 
 exports.getTopics = (req, res, next) => {
@@ -54,11 +54,12 @@ exports.getArticles = (req, res, next) => {
       next(err);
     });
 };
-exports.deleteCommentByCommentId = (req, res, next) => {
-  const { commentId } = req.params;
-  removeComment(commentId)
-    .then(() => {
-      res.status(204).send({ msg: "No content" });
+exports.patchArticleById = (req, res, next) => {
+  const { articleId } = req.params;
+  const { inc_votes } = req.body;
+  updateArticleById(articleId, inc_votes)
+    .then((updatedArticle) => {
+      res.status(200).send({ article: updatedArticle });
     })
     .catch((err) => {
       next(err);
