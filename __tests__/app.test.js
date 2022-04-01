@@ -1,3 +1,4 @@
+const { response } = require("express");
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
@@ -82,31 +83,43 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+// describe.only("/api/articles", () => {
+//   test("GET status 200 - responds with an array of articles objects", () => {
+//     return request(app)
+//       .get("/api/articles?sort_by=created_at&&order=ASC")
+//       .expect(200)
+//       .then((response) => {
+//         console.log(response);
+//         expect(response.body.articles).toBeInstanceOf(Array);
+//         expect(response.body.articles).toHaveLength(5);
+//         expect(response.body.articles).toBeSortedBy("created_at", {
+//           ascending: true,
+//         });
+//         response.body.articles.forEach((article) => {
+//           expect(article).toEqual(
+//             expect.objectContaining({
+//               article_id: expect.any(Number),
+//               title: expect.any(String),
+//               topic: expect.any(String),
+//               author: expect.any(String),
+//               body: expect.any(String),
+//               created_at: expect.any(String),
+//               votes: expect.any(Number),
+//               comment_count: expect.any(String),
+//             })
+//           );
+//         });
+//       });
+//   });
+// });
+
 describe("/api/articles", () => {
-  test("GET status 200 - responds with an array of articles objects", () => {
+  test("GET status:200 - responds with an array of article objects where the default order is created_at DESC", () => {
     return request(app)
-      .get("/api/articles")
+      .get("/api/articles?sort_by=created_at&&order=DESC")
       .expect(200)
-      .then((response) => {
-        expect(response.body.articles).toBeInstanceOf(Array);
-        expect(response.body.articles).toHaveLength(5);
-        expect(response.body.articles).toBeSortedBy("created_at", {
-          ascending: true,
-        });
-        response.body.articles.forEach((article) => {
-          expect(article).toEqual(
-            expect.objectContaining({
-              article_id: expect.any(Number),
-              title: expect.any(String),
-              topic: expect.any(String),
-              author: expect.any(String),
-              body: expect.any(String),
-              created_at: expect.any(String),
-              votes: expect.any(Number),
-              comment_count: expect.any(String),
-            })
-          );
-        });
+      .then((res) => {
+        console.log(res);
       });
   });
 });

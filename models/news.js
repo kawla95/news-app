@@ -42,7 +42,7 @@ exports.selectCommentsByArticleId = (articleId) => {
 //       return response.rows;
 //     });
 // };
-exports.selectArticles = (sort_by = "created_at", order = "ASC", topic) => {
+exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
   const validColumns = [
     "title",
     "topic",
@@ -50,7 +50,6 @@ exports.selectArticles = (sort_by = "created_at", order = "ASC", topic) => {
     "body",
     "created_at",
     "votes",
-    "comment_count",
   ];
   if (!validColumns.includes(sort_by)) {
     return Promise.reject({
@@ -65,13 +64,11 @@ exports.selectArticles = (sort_by = "created_at", order = "ASC", topic) => {
       msg: "Bad Request",
     });
   }
-
-  let queryStr =
-    `SELECT articles.*, COUNT(comments. comment_id) AS comment_count
+  let queryStr = `SELECT articles.*, COUNT(comments. comment_id) AS comment_count
     FROM articles
-    JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY created_at = $1;`[
-      validOrders
-    ];
+    JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id;`;
+
+  queryStr += ` ORDER BY ${sort_by} ${order};`;
 
   return db.query(queryStr).then((result) => {
     return result.rows;
