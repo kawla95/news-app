@@ -4,6 +4,7 @@ const {
   selectUsers,
   selectCommentsByArticleId,
   selectArticles,
+  updateArticleById,
   removeComment,
 } = require("../models/news");
 
@@ -51,6 +52,17 @@ exports.getArticles = (req, res, next) => {
   selectArticles(sort_by, order)
     .then((articles) => {
       res.status(200).send({ articles });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+exports.patchArticleById = (req, res, next) => {
+  const { articleId } = req.params;
+  const { inc_votes } = req.body;
+  updateArticleById(articleId, inc_votes)
+    .then((updatedArticle) => {
+      res.status(200).send({ article: updatedArticle });
     })
     .catch((err) => {
       next(err);

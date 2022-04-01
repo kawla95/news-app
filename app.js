@@ -11,6 +11,7 @@ const {
   getUsers,
   getCommentsByArticleId,
   getArticles,
+  patchArticleById,
   deleteCommentByCommentId,
 } = require("./controllers/news");
 
@@ -26,10 +27,19 @@ app.get("/api/articles/:articleId/comments", getCommentsByArticleId);
 
 app.get("/api/articles", getArticles);
 
+app.patch("/api/articles/:articleId", patchArticleById);
+
 app.delete("/api/comments/:commentId", deleteCommentByCommentId);
 
 app.all("/*", handleIncorrectPath);
 
+app.use((err, req, res, next) => {
+  if (err.status) {
+    res.status(err.status).send({ msg: err.msg });
+  } else {
+    next(err);
+  }
+});
 app.use(handleInternalServerError);
 
 module.exports = app;

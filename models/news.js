@@ -75,6 +75,21 @@ exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
   });
 };
 
+exports.updateArticleById = (articleId, inc_votes) => {
+  if (typeof inc_votes != "number") {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  return db
+    .query(
+      `UPDATE articles SET votes = votes + $1
+                  WHERE article_id = $2 RETURNING *;`,
+      [inc_votes, articleId]
+    )
+    .then((response) => {
+      console.log(response.rows[0]);
+      return response.rows[0];
+    });
+};
 exports.removeComment = (commentId) => {
   return db
     .query(`DELETE from comments WHERE comment_id = $1 RETURNING *;`, [

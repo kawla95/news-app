@@ -124,6 +124,45 @@ describe("/api/articles", () => {
   });
 });
 
+describe("/api/articles/:article_id", () => {
+  test("200: responds with the updated article", async () => {
+    const patchVotes = {
+      inc_votes: 1,
+    };
+    const { body } = await request(app)
+      .patch("/api/articles/1")
+      .send(patchVotes)
+      .expect(200);
+    expect(body.article).toEqual({
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: "2020-07-09T20:11:00.000Z",
+      votes: 100 + patchVotes.inc_votes,
+    });
+  });
+});
+test("status: 404 - with an error message", async () => {
+  const patchVotes = {
+    inc_votes: 100,
+  };
+  const { body } = await request(app).patch("/").send(patchVotes).expect(404);
+  expect(body.msg).toBe("path not found");
+});
+test("status: 400, returns an error", () => {
+  const patchVotes = {
+    inc_votes: "",
+  };
+  return request(app)
+    .patch("/api/articles/1")
+    .send(patchVotes)
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe("Bad request");
+    });
+});
 describe("DELETE /api/comments/:comment_id", () => {
   test("return status: 204 and no content", () => {
     return request(app).delete("/api/comments/2").expect(204);
