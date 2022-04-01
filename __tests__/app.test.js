@@ -115,3 +115,27 @@ describe("DELETE /api/comments/:comment_id", () => {
     return request(app).delete("/api/comments/2").expect(204);
   });
 });
+
+describe.only("POST /api/articles/:article_id/comments", () => {
+  test("201: returns a copy of a new comment", () => {
+    const body = {
+      username: "butter_bridge",
+      body: "testing",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(body)
+      .expect(201)
+      .then((res) => {
+        console.log(res.body);
+        expect(res.body).toMatchObject({
+          comment_id: 19,
+          body: "testing",
+          votes: 10,
+          author: "butter_bridge",
+          article_id: 3,
+          created_at: 1586179022300,
+        });
+      });
+  });
+});

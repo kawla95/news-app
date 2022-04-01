@@ -5,6 +5,7 @@ const {
   selectCommentsByArticleId,
   selectArticles,
   removeComment,
+  addCommentByArticleId,
 } = require("../models/news");
 
 exports.getTopics = (req, res, next) => {
@@ -63,4 +64,15 @@ exports.deleteCommentByCommentId = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+exports.postCommentByArticleId = (req, res, next) => {
+  const { articleId } = req.params;
+  const newComment = req.body;
+  console.log(articleId, newComment);
+
+  addCommentByArticleId(articleId, newComment)
+    .then((comment) => {
+      return res.status(201).send({ comment });
+    })
+    .catch((err) => next(err));
 };
