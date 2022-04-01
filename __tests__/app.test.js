@@ -139,7 +139,7 @@ test("status: 404 - with an error message", async () => {
 });
 test("status: 400, returns an error", () => {
   const patchVotes = {
-    inc_votes: "jguf",
+    inc_votes: "",
   };
   return request(app)
     .patch("/api/articles/1")
