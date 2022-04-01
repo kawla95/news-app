@@ -3,7 +3,6 @@ const app = express();
 const {
   handleIncorrectPath,
   handleInternalServerError,
-  handleInvalidRequests,
 } = require("./errorhandling");
 
 const {

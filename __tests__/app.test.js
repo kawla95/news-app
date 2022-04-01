@@ -110,6 +110,7 @@ describe("/api/articles", () => {
       });
   });
 });
+<<<<<<< HEAD
 describe("/api/articles/:article_id", () => {
   test("200: responds with the updated article", async () => {
     const patchVotes = {
@@ -149,3 +150,4 @@ test("status: 400, returns an error", () => {
       expect(res.body.msg).toBe("Bad request");
     });
 });
+
