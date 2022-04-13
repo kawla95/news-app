@@ -90,9 +90,8 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((response) => {
-        console.log(response.body.articles);
         expect(response.body.articles).toBeInstanceOf(Array);
-        expect(response.body.articles).toHaveLength(12);
+        expect(response.body.articles).toHaveLength(5);
         expect(response.body.articles).toBeSortedBy("created_at", {
           descending: true,
         });
@@ -117,11 +116,34 @@ describe("/api/articles", () => {
 describe("/api/articles(queries)", () => {
   test("GET status:200 - responds with an array of article objects where the default order is created_at DESC", () => {
     return request(app)
-      .get("/api/articles?created_at=asc")
+      .get("/api/articles?sort_by=created_at&&order=ASC")
+      .expect(200)
+      .then((res) => {
+        return res.body.articles;
+      });
+  });
+});
+
+describe("/api/articles?topic)", () => {
+  test("GET status 200 & correct articles from client topic queries", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
       .expect(200)
       .then((res) => {
         console.log(res.body.articles);
-        return res.body.articles;
+        expect(res.body.articles).toBeInstanceOf(Array);
+        expect(res.body.articles).toHaveLength(1);
+        expect(res.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("GET: status 400 & error message invalid sort_by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=invalid")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
       });
   });
 });

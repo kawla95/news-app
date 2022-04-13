@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const format = require("pg-format");
 
 exports.selectTopics = () => {
   return db.query(`SELECT * FROM topics;`).then((response) => {
@@ -42,9 +43,9 @@ exports.selectCommentsByArticleId = (articleId) => {
 //       return response.rows;
 //     });
 // };
-exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
-  const validColumns = [
-    "article_id",
+
+exports.selectArticles = (sort_by = "created_at", order = "DESC", topic) => {
+  const allowedSortBys = [
     "title",
     "topic",
     "author",
@@ -53,21 +54,62 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
     "votes",
     "comment_count",
   ];
-  if (!validColumns.includes(sort_by)) {
-    return Promise.reject({
-      status: 400,
-      msg: "Bad Request",
+  const allowedOrder = ["ASC", "DESC"];
+  if (!allowedSortBys.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  if (!allowedOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  } else {
+    let queryValues = [];
+    let sqlString = `SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+    FROM articles
+    JOIN comments ON articles.article_id = comments.article_id`;
+
+    if (topic) {
+      queryValues.push(topic);
+      sqlString += ` WHERE topic ILIKE %L`;
+    }
+
+    sqlString += ` GROUP BY articles.article_id`;
+
+    if (sort_by === "title") {
+      queryValues.push(`title`);
+      sqlString += ` ORDER BY %I`;
+    } else if (sort_by === "body") {
+      queryValues.push(`body`);
+      sqlString += ` ORDER BY %I`;
+    } else if (sort_by === "votes") {
+      queryValues.push(`votes`);
+      sqlString += ` ORDER BY %I`;
+    } else if (sort_by === "topic") {
+      queryValues.push(`topic`);
+      sqlString += ` ORDER BY %I`;
+    } else if (sort_by === "author") {
+      queryValues.push(`author`);
+      sqlString += ` ORDER BY %I`;
+    } else if (sort_by === "comment_count") {
+      queryValues.push(`comment_count`);
+      sqlString += ` ORDER BY %I`;
+    } else {
+      queryValues.push(`created_at`);
+      sqlString += ` ORDER BY %I`;
+    }
+
+    if (order === "ASC") {
+      queryValues.push(` ASC`);
+      sqlString += ` %s`;
+    } else {
+      queryValues.push(` DESC`);
+      sqlString += ` %s`;
+    }
+
+    const queryString = format(sqlString, ...queryValues);
+
+    return db.query(queryString).then((responses) => {
+      return responses.rows;
     });
   }
-  const orders = ["ASC", "DESC"];
-
-  let queryStr = ` SELECT articles.*, COUNT(comments.comment_id) AS comment_count
-   FROM articles
-   LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY created_at ${orders}`;
-
-  return db.query(queryStr).then((result) => {
-    return result.rows;
-  });
 };
 
 exports.updateArticleById = (articleId, inc_votes) => {
