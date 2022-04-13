@@ -67,10 +67,9 @@ exports.deleteCommentByCommentId = (req, res, next) => {
 };
 exports.postCommentByArticleId = (req, res, next) => {
   const { articleId } = req.params;
-  const newComment = req.body;
-  console.log(articleId, newComment);
+  const { username, body } = req.body;
 
-  addCommentByArticleId(articleId, newComment)
+  addCommentByArticleId(articleId, username, body)
     .then((comment) => {
       return res.status(201).send({ comment });
     })

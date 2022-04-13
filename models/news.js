@@ -51,12 +51,12 @@ exports.removeComment = (commentId) => {
       return res.rows[0];
     });
 };
-exports.addCommentByArticleId = (articleId, newComment) => {
+exports.addCommentByArticleId = (articleId, author, body) => {
   return db
     .query(
       `INSERT INTO comments (article_id, author, body)
-  VALUES ($1, $2) RETURNING *;`,
-      [articleId, newComment]
+  VALUES ($1, $2, $3) RETURNING *;`,
+      [articleId, author, body]
     )
     .then((res) => {
       console.log(res.rows);

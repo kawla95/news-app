@@ -116,7 +116,7 @@ describe("DELETE /api/comments/:comment_id", () => {
   });
 });
 
-describe.only("POST /api/articles/:article_id/comments", () => {
+describe("POST /api/articles/:article_id/comments", () => {
   test("201: returns a copy of a new comment", () => {
     const body = {
       username: "butter_bridge",
@@ -128,13 +128,11 @@ describe.only("POST /api/articles/:article_id/comments", () => {
       .expect(201)
       .then((res) => {
         console.log(res.body);
-        expect(res.body).toMatchObject({
+        expect(res.body.comment).toMatchObject({
           comment_id: 19,
           body: "testing",
-          votes: 10,
           author: "butter_bridge",
           article_id: 3,
-          created_at: 1586179022300,
         });
       });
   });
