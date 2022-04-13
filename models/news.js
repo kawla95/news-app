@@ -42,14 +42,16 @@ exports.selectCommentsByArticleId = (articleId) => {
 //       return response.rows;
 //     });
 // };
-exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
+exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
   const validColumns = [
+    "article_id",
     "title",
     "topic",
     "author",
     "body",
     "created_at",
     "votes",
+    "comment_count",
   ];
   if (!validColumns.includes(sort_by)) {
     return Promise.reject({
@@ -57,18 +59,11 @@ exports.selectArticles = (sort_by = "created_at", order = "DESC") => {
       msg: "Bad Request",
     });
   }
-  const validOrders = ["ASC", "DESC"];
-  if (!validOrders.includes(order)) {
-    return Promise.reject({
-      status: 400,
-      msg: "Bad Request",
-    });
-  }
-  let queryStr = `SELECT articles.*, COUNT(comments. comment_id) AS comment_count
-    FROM articles
-    JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id;`;
+  const orders = ["ASC", "DESC"];
 
-  queryStr += ` ORDER BY ${sort_by} ${order};`;
+  let queryStr = ` SELECT articles.*, COUNT(comments.comment_id) AS comment_count
+   FROM articles
+   LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id ORDER BY created_at ${orders}`;
 
   return db.query(queryStr).then((result) => {
     return result.rows;
@@ -86,7 +81,6 @@ exports.updateArticleById = (articleId, inc_votes) => {
       [inc_votes, articleId]
     )
     .then((response) => {
-      console.log(response.rows[0]);
       return response.rows[0];
     });
 };
