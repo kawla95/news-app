@@ -201,50 +201,23 @@ describe("DELETE /api/comments/:comment_id", () => {
     return request(app).delete("/api/comments/2").expect(204);
   });
 });
-describe("/api", () => {
-  test("GET: status 200 & description of all endpoints", () => {
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: returns a copy of a new comment", () => {
+    const body = {
+      username: "butter_bridge",
+      body: "testing",
+    };
     return request(app)
-      .get("/api")
-      .expect(200)
-      .then((response) => {
-        console.log(response.body);
-        expect(response.body.apiDescription).toEqual({
-          "DELETE /api/articles/:articleId/comments": {
-            description:
-              "deletes a comments object relating to an article when provided a valid comment ID",
-          },
-          "GET /api": {
-            description:
-              "serves up a json representation of all the available endpoints of the api",
-          },
-          "GET /api/articles": {
-            description: "serves an array of all topics",
-            exampleResponse: {
-              articles: [
-                {
-                  author: "weegembump",
-                  body: "Text from the article..",
-                  created_at: 1527695953341,
-                  title: "Seafood substitutions are increasing",
-                  topic: "cooking",
-                },
-              ],
-            },
-            queries: ["author", "topic", "sort_by", "order"],
-          },
-          "GET /api/articles/:articleId": {
-            description:
-              "serves an article object when provided a valid article ID",
-          },
-          "GET /api/articles/:articleId/comments": {
-            description:
-              "serves a comments object relating to an article when provided a valid article ID",
-          },
-          "GET /api/topics": { description: "serves an array of all topics" },
-          "POST /api/articles/:articleId/comments": {
-            description:
-              "posts a comments object relating to an article when provided a valid body and article ID",
-          },
+      .post("/api/articles/3/comments")
+      .send(body)
+      .expect(201)
+      .then((res) => {
+        console.log(res.body);
+        expect(res.body.comment).toMatchObject({
+          comment_id: 19,
+          body: "testing",
+          author: "butter_bridge",
+          article_id: 3,
         });
       });
   });

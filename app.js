@@ -13,12 +13,10 @@ const {
   getArticles,
   patchArticleById,
   deleteCommentByCommentId,
-  getApi,
+  postCommentByArticleId,
 } = require("./controllers/news");
 
 app.use(express.json());
-
-app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
 
@@ -33,6 +31,8 @@ app.get("/api/articles", getArticles);
 app.patch("/api/articles/:articleId", patchArticleById);
 
 app.delete("/api/comments/:commentId", deleteCommentByCommentId);
+
+app.post("/api/articles/:articleId/comments", postCommentByArticleId);
 
 app.all("/*", handleIncorrectPath);
 

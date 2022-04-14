@@ -6,6 +6,7 @@ const {
   selectArticles,
   updateArticleById,
   removeComment,
+  addCommentByArticleId,
 } = require("../models/news");
 
 exports.getTopics = (req, res, next) => {
@@ -77,50 +78,13 @@ exports.deleteCommentByCommentId = (req, res, next) => {
       next(err);
     });
 };
-exports.getApi = (req, res, next) => {
-  const apiDescription = {
-    "GET /api": {
-      description:
-        "serves up a json representation of all the available endpoints of the api",
-    },
-    "GET /api/topics": {
-      description: "serves an array of all topics",
-    },
-    "GET /api/articles": {
-      description: "serves an array of all topics",
-      queries: ["author", "topic", "sort_by", "order"],
-      exampleResponse: {
-        articles: [
-          {
-            title: "Seafood substitutions are increasing",
-            topic: "cooking",
-            author: "weegembump",
-            body: "Text from the article..",
-            created_at: 1527695953341,
-          },
-        ],
-      },
-    },
-    "GET /api/articles/:articleId": {
-      description: "serves an article object when provided a valid article ID",
-    },
-    "GET /api/articles/:articleId/comments": {
-      description:
-        "serves a comments object relating to an article when provided a valid article ID",
-    },
-    "POST /api/articles/:articleId/comments": {
-      description:
-        "posts a comments object relating to an article when provided a valid body and article ID",
-    },
-    "DELETE /api/articles/:articleId/comments": {
-      description:
-        "deletes a comments object relating to an article when provided a valid comment ID",
-    },
-  };
-  res
-    .status(200)
-    .send({ apiDescription })
-    .catch((err) => {
-      next(err);
-    });
+exports.postCommentByArticleId = (req, res, next) => {
+  const { articleId } = req.params;
+  const { username, body } = req.body;
+
+  addCommentByArticleId(articleId, username, body)
+    .then((comment) => {
+      return res.status(201).send({ comment });
+    })
+    .catch((err) => next(err));
 };
