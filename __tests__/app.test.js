@@ -1,3 +1,4 @@
+const { response } = require("express");
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
@@ -82,6 +83,7 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+
 describe("/api/articles", () => {
   test("GET status 200 - responds with an array of articles objects", () => {
     return request(app)
@@ -110,12 +112,95 @@ describe("/api/articles", () => {
       });
   });
 });
+
+describe("/api/articles(queries)", () => {
+  test("GET status:200 - responds with an array of article objects where the default order is created_at DESC", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&&order=DESC")
+      .expect(200)
+      .then((res) => {
+        return res.body.articles;
+      });
+  });
+});
+describe("/api/articles(queries)", () => {
+  test("GET status:200 - responds with an array of article objects where the order is ASC", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&&order=ASC")
+      .expect(200)
+      .then((res) => {
+        return res.body.articles;
+      });
+  });
+});
+
+describe("/api/articles?topic)", () => {
+  test("GET status 200 & requested articles from user topic queries", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeInstanceOf(Array);
+        expect(res.body.articles).toHaveLength(1);
+        expect(res.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("GET: status 400 & error message for invalid sort_by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=banana")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("/api/articles/:article_id", () => {
+  test("200: responds with the updated article", async () => {
+    const patchVotes = {
+      inc_votes: 1,
+    };
+    const { body } = await request(app)
+      .patch("/api/articles/1")
+      .send(patchVotes)
+      .expect(200);
+    expect(body.article).toEqual({
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: "2020-07-09T20:11:00.000Z",
+      votes: 100 + patchVotes.inc_votes,
+    });
+  });
+});
+test("status: 404 - with an error message", async () => {
+  const patchVotes = {
+    inc_votes: 100,
+  };
+  const { body } = await request(app).patch("/").send(patchVotes).expect(404);
+  expect(body.msg).toBe("path not found");
+});
+test("status: 400, returns an error", () => {
+  const patchVotes = {
+    inc_votes: "",
+  };
+  return request(app)
+    .patch("/api/articles/1")
+    .send(patchVotes)
+    .expect(400)
+    .then((res) => {
+      expect(res.body.msg).toBe("Bad request");
+    });
+});
 describe("DELETE /api/comments/:comment_id", () => {
   test("return status: 204 and no content", () => {
     return request(app).delete("/api/comments/2").expect(204);
   });
 });
-
 describe("POST /api/articles/:article_id/comments", () => {
   test("201: returns a copy of a new comment", () => {
     const body = {
@@ -136,12 +221,4 @@ describe("POST /api/articles/:article_id/comments", () => {
         });
       });
   });
-});
-
-it("PATCH status:404, when passed an invalid article_id", async () => {
-  const { body } = await request(app)
-    .patch("/api/articles/not-an-id")
-    .send({})
-    .expect(404);
-  expect(body.msg).toBe("path not found");
 });
