@@ -116,5 +116,10 @@ exports.getApi = (req, res, next) => {
         "deletes a comments object relating to an article when provided a valid comment ID",
     },
   };
-  res.status(200).send(apiDescription);
+  res
+    .status(200)
+    .send({ apiDescription })
+    .catch((err) => {
+      next(err);
+    });
 };

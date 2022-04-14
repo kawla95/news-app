@@ -161,7 +161,7 @@ describe("/api", () => {
       .expect(200)
       .then((response) => {
         console.log(response.body);
-        expect(response.body).toEqual({
+        expect(response.body.apiDescription).toEqual({
           "DELETE /api/articles/:articleId/comments": {
             description:
               "deletes a comments object relating to an article when provided a valid comment ID",
