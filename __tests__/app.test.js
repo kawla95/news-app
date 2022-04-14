@@ -1,3 +1,4 @@
+const { response } = require("express");
 const request = require("supertest");
 const app = require("../app");
 const db = require("../db/connection");
@@ -82,6 +83,7 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+
 describe("/api/articles", () => {
   test("GET status 200 - responds with an array of articles objects", () => {
     return request(app)
@@ -110,6 +112,51 @@ describe("/api/articles", () => {
       });
   });
 });
+
+describe("/api/articles(queries)", () => {
+  test("GET status:200 - responds with an array of article objects where the default order is created_at DESC", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&&order=DESC")
+      .expect(200)
+      .then((res) => {
+        return res.body.articles;
+      });
+  });
+});
+describe("/api/articles(queries)", () => {
+  test("GET status:200 - responds with an array of article objects where the order is ASC", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&&order=ASC")
+      .expect(200)
+      .then((res) => {
+        return res.body.articles;
+      });
+  });
+});
+
+describe("/api/articles?topic)", () => {
+  test("GET status 200 & requested articles from user topic queries", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then((res) => {
+        expect(res.body.articles).toBeInstanceOf(Array);
+        expect(res.body.articles).toHaveLength(1);
+        expect(res.body.articles).toBeSortedBy("created_at", {
+          descending: true,
+        });
+      });
+  });
+  test("GET: status 400 & error message for invalid sort_by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=banana")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+});
+
 describe("/api/articles/:article_id", () => {
   test("200: responds with the updated article", async () => {
     const patchVotes = {
