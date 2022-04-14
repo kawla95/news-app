@@ -137,3 +137,11 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+it("PATCH status:404, when passed an invalid article_id", async () => {
+  const { body } = await request(app)
+    .patch("/api/articles/not-an-id")
+    .send({})
+    .expect(404);
+  expect(body.msg).toBe("path not found");
+});
