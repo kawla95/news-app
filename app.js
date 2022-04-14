@@ -14,10 +14,12 @@ const {
   patchArticleById,
   deleteCommentByCommentId,
   postCommentByArticleId,
+  getApi,
 } = require("./controllers/news");
 
 app.use(express.json());
 
+app.get("/api", getApi);
 app.get("/api/topics", getTopics);
 
 app.get("/api/articles/:articleId", getArticleById);
