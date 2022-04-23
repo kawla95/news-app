@@ -211,7 +211,6 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(body)
       .expect(201)
       .then((res) => {
-        console.log(res.body);
         expect(res.body.comment).toMatchObject({
           comment_id: 19,
           body: "testing",
@@ -227,7 +226,6 @@ describe("/api", () => {
       .get("/api")
       .expect(200)
       .then((response) => {
-        console.log(response.body);
         expect(response.body).toEqual({
           "DELETE /api/articles/:articleId/comments": {
             description:
